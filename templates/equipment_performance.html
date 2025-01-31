@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Equipment Performance - Quality Operational Dashboard</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+        background-color: #f4f4f4;
+      }
+      .container {
+        max-width: 800px;
+        margin: auto;
+        background: white;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #333;
+      }
+      .data-item {
+        background-color: #e9ecef;
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 10px;
+      }
+      .data-item h2 {
+        margin-top: 0;
+        color: #495057;
+      }
+      .data-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #007bff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Equipment Performance</h1>
+      <div class="data-item">
+        <h2>Overall Equipment Effectiveness (OEE)</h2>
+        <p class="data-value">{{ data.overall_equipment_effectiveness }}%</p>
+      </div>
+      <div class="data-item">
+        <h2>Availability</h2>
+        <p class="data-value">{{ data.availability }}%</p>
+      </div>
+      <div class="data-item">
+        <h2>Performance</h2>
+        <p class="data-value">{{ data.performance }}%</p>
+      </div>
+      <div class="data-item">
+        <h2>Quality</h2>
+        <p class="data-value">{{ data.quality }}%</p>
+      </div>
+    </div>
+  </body>
+</html>

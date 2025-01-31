@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production Overview - Quality Operational Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #ffffff;
+            margin-bottom: 24px;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 4px;
+        }
+        .table th {
+            text-align: left;
+            padding: 16px;
+            color: #888;
+            font-weight: normal;
+            border-bottom: 1px solid #333;
+        }
+        .table td {
+            padding: 16px;
+            background: #2a2a2a;
+        }
+        .table tr:nth-child(odd) td {
+            background: #252525;
+        }
+        .status {
+            padding: 6px 12px;
+            border-radius: 4px;
+            display: inline-block;
+            font-weight: 500;
+        }
+        .status-on-track {
+            background: #1a472a;
+            color: #4ade80;
+        }
+        .status-delayed {
+            background: #4c1d1d;
+            color: #f87171;
+        }
+        .status-ahead {
+            background: #1e3a8a;
+            color: #60a5fa;
+        }
+        .status-scheduled {
+            background: #1e3a8a;
+            color: #60a5fa;
+        }
+        .status-overdue {
+            background: #4c1d1d;
+            color: #f87171;
+        }
+        .status-completed {
+            background: #1a472a;
+            color: #4ade80;
+        }
+        .status-in-progress {
+            background: #854d0e;
+            color: #fbbf24;
+        }
+        .chart-container {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .chart-container img {
+            max-width: 100%;
+            height: auto;
+        }
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding: 10px;
+            background: #2a2a2a;
+            border-radius: 8px;
+        }
+
+        .pagination-nav {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            background-color: #0f766e;
+        }
+
+        .pagination-nav:hover {
+            background-color: #115e59;
+        }
+
+        .pagination-nav.disabled {
+            opacity: 0.5;
+            cursor: pointer;
+            background-color: #0f766e;
+        }
+
+        .page-numbers {
+            color: #fff;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="section">
+            <h1>Production Schedule</h1>
+            <table class="table production-schedule">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Scheduled</th>
+                        <th>Actual</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in production_data %}
+                    <tr>
+                        <td>{{ item.product }}</td>
+                        <td>{{ item.scheduled }}</td>
+                        <td>{{ item.actual }}</td>
+                        <td>
+                            <span class="status status-{{ item.status.lower().replace(' ', '-') }}">
+                                {{ item.status }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h1>Equipment Maintenance Log</h1>
+            <table class="table maintenance-log">
+                <thead>
+                    <tr>
+                        <th>Equipment</th>
+                        <th>Last Maintenance</th>
+                        <th>Next Maintenance</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in maintenance_data %}
+                    <tr>
+                        <td>{{ item.equipment }}</td>
+                        <td>{{ item.last_maintenance }}</td>
+                        <td>{{ item.next_maintenance }}</td>
+                        <td>
+                            <span class="status status-{{ item.status.lower().replace(' ', '-') }}">
+                                {{ item.status }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+        <h1>Production Output Over Time</h1>
+        <div class="chart-container">
+          {% if chart %}
+            <div>{{ chart|safe }}</div>
+          {% else %}
+            <p>No production output data available</p>
+          {% endif %}
+        </div>
+      </div>
+        </div>
+    </div>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    function setupTablePagination(tableSelector, itemsPerPage) {
+        const table = document.querySelector(tableSelector);
+        const rows = table.querySelectorAll('tbody tr');
+        let currentPage = 1;
+        const totalPages = Math.ceil(rows.length / itemsPerPage);
+
+        function showPage(page) {
+            const start = (page - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+
+            rows.forEach((row, index) => {
+                if (index >= start && index < end) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            updatePageNumbers();
+        }
+
+        function setupPagination() {
+            const paginationContainer = document.createElement('div');
+            paginationContainer.className = 'pagination';
+
+            const prevButton = document.createElement('div');
+            prevButton.className = 'pagination-nav';
+            prevButton.innerHTML = '← PREVIOUS';
+            prevButton.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    showPage(currentPage);
+                    updateNavButtons();
+                }
+            });
+
+            const pageNumbers = document.createElement('div');
+            pageNumbers.className = 'page-numbers';
+
+            const nextButton = document.createElement('div');
+            nextButton.className = 'pagination-nav';
+            nextButton.innerHTML = 'NEXT →';
+            nextButton.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    showPage(currentPage);
+                    updateNavButtons();
+                }
+            });
+
+            paginationContainer.appendChild(prevButton);
+            paginationContainer.appendChild(pageNumbers);
+            paginationContainer.appendChild(nextButton);
+            table.parentNode.insertBefore(paginationContainer, table.nextSibling);
+
+            function updateNavButtons() {
+                prevButton.classList.toggle('disabled', currentPage === 1);
+                nextButton.classList.toggle('disabled', currentPage === totalPages);
+                updatePageNumbers();
+            }
+
+            updateNavButtons();
+        }
+
+        function updatePageNumbers() {
+            const pageNumbers = table.parentNode.querySelector('.page-numbers');
+            pageNumbers.textContent = `Page ${currentPage} of ${totalPages}`;
+        }
+
+        if (rows.length > itemsPerPage) {
+            setupPagination();
+            showPage(currentPage);
+        }
+    }
+
+    // Set up pagination for both tables
+    setupTablePagination('.production-schedule', 5);
+    setupTablePagination('.maintenance-log', 5);
+});
+</script>
+</body>
+</html>
+
