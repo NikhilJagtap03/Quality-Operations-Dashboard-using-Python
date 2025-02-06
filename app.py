@@ -9,14 +9,14 @@ import dns  # required for mongodb+srv:// URIs
 from production_overview import production_overview
 from equipment_performance import equipment_performance
 from quality_control import quality_control
-from customer_satisfaction import customer_satisfaction
+from customer_satisfaction import create_dash_app, customer_satisfaction
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'no_secret_key_right_now'
 app.register_blueprint(production_overview)
 app.register_blueprint(equipment_performance)
 app.register_blueprint(quality_control)
-app.register_blueprint(customer_satisfaction)
+app.register_blueprint(customer_satisfaction, url_prefix='/customer_satisfaction')
 bcrypt = Bcrypt(app)
 
 # MongoDB Atlas connection string
@@ -38,6 +38,8 @@ def is_valid_email(email):
 def is_valid_password(password):
     password_regex = re.compile(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$')
     return password_regex.match(password)
+
+dash_app = create_dash_app(app)
 
 @app.route('/')
 def index():

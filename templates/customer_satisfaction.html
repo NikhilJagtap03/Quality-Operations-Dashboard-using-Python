@@ -1,60 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Customer Satisfaction - Quality Operational Dashboard</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        line-height: 1.6;
-        margin: 0;
-        padding: 20px;
-        background-color: #f4f4f4;
-      }
-      .container {
-        max-width: 800px;
-        margin: auto;
-        background: white;
-        padding: 20px;
-        border-radius: 5px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      }
-      h1 {
-        color: #333;
-      }
-      .data-item {
-        background-color: #e9ecef;
-        border-radius: 5px;
-        padding: 15px;
-        margin-bottom: 10px;
-      }
-      .data-item h2 {
-        margin-top: 0;
-        color: #495057;
-      }
-      .data-value {
-        font-size: 24px;
-        font-weight: bold;
-        color: #007bff;
-      }
-    </style>
-  </head>
-  <body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quality Operational Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
     <div class="container">
-      <h1>Customer Satisfaction</h1>
-      <div class="data-item">
-        <h2>Customer Satisfaction Score</h2>
-        <p class="data-value">{{ data.customer_satisfaction_score }}/5</p>
-      </div>
-      <div class="data-item">
-        <h2>On-Time Delivery</h2>
-        <p class="data-value">{{ data.on_time_delivery }}%</p>
-      </div>
-      <div class="data-item">
-        <h2>Return Rate</h2>
-        <p class="data-value">{{ data.return_rate }}%</p>
-      </div>
+        <h1>Customer Satisfaction Dashboard</h1>
+
+        <!-- Satisfaction Metrics -->
+        <div class="metric-box">
+            <h2>Satisfaction Score</h2>
+            <p class="data-value">4.5/5</p>
+        </div>
+        <div class="metric-box">
+            <h2>On-Time Delivery</h2>
+            <p class="data-value">92%</p>
+        </div>
+        <div class="metric-box">
+            <h2>Return Rate</h2>
+            <p class="data-value">8%</p>
+        </div>
+        <div class="metric-box">
+            <h2>Customer Support Rating</h2>
+            <p class="data-value">4.2/5</p>
+        </div>
+        <div class="metric-box">
+            <h2>Product Quality</h2>
+            <p class="data-value">4.7/5</p>
+        </div>
+
+        <!-- Dropdown for Month Selection -->
+        <div class="dropdown-container">
+            <label for="month">Select Delivery Month:</label>
+            <select id="month" class="dropdown">
+                <option value="Jan">January</option>
+                <option value="Feb">February</option>
+                <option value="Mar">March</option>
+                <option value="Apr">April</option>
+                <option value="May">May</option>
+            </select>
+        </div>
+
+        <!-- Placeholder for Graphs -->
+        <div class="graph-box">
+            <h2>On-Time Delivery Trend</h2>
+            <div id="delivery-graph-placeholder">📈 Graph will be displayed here</div>
+        </div>
+        
+        <div class="graph-box">
+            <h2>Return Reasons</h2>
+            <div id="return-graph-placeholder">📊 Pie Chart will be displayed here</div>
+        </div>
     </div>
-  </body>
+</body>
 </html>
